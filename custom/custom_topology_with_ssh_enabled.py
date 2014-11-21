@@ -49,7 +49,7 @@ class MyTopo( Topo ):
     self.addLink( p3, s3 )
     self.addLink( s1, s2 )
     self.addLink( s1, s3 )
-    #self.addLink( s3, s1 )
+    self.addLink( s2, s3 )
 
 
 def connectToRootNS( network, switch, ip, routes ):
