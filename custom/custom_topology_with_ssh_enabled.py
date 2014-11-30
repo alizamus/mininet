@@ -41,6 +41,7 @@ class MyTopo( Topo ):
     p3 = self.addHost( 'p3', ip='10.0.2.2' )
     
     s1 = self.addSwitch( 's1' )
+ 
     s2 = self.addSwitch( 's2' )
     s3 = self.addSwitch( 's3' )
     
@@ -50,8 +51,11 @@ class MyTopo( Topo ):
     self.addLink( s1, s2 )
     self.addLink( s1, s3 )
     self.addLink( s2, s3 )
-
-
+    """
+    self.addLink( p1, s1 )
+    self.addLink( p2, s1 )
+    self.addLink( p3, s1 )
+    """
 def connectToRootNS( network, switch, ip, routes ):
     """Connect hosts to root namespace via switch. Starts network.
       network: Mininet() network object
@@ -97,6 +101,11 @@ def sshd( network, cmd='/usr/sbin/sshd', opts='-D',
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
     net = Mininet( topo=MyTopo(), link=TCLink, controller=RemoteController)
+    p1,p2,p3 = net.getNodeByName('p1', 'p2', 'p3')
+      
+    p1.setMAC(mac='00:00:00:01:02:00')
+    p2.setMAC(mac='00:00:00:01:02:01')
+    p3.setMAC(mac='00:00:00:01:02:02')
 
     opts = ' '.join( sys.argv[ 1: ] ) if len( sys.argv ) > 1 else (
         '-D -o UseDNS=no -u0' )
