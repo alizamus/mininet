@@ -39,7 +39,7 @@ class MyTopo( Topo ):
     p1 = self.addHost( 'p1', ip='10.0.2.0' )
     p2 = self.addHost( 'p2', ip='10.0.2.1' )
     p3 = self.addHost( 'p3', ip='10.0.2.2' )
-    
+    p4 = self.addHost( 'p4', ip='10.0.2.3' )
     s1 = self.addSwitch( 's1' )
  
     s2 = self.addSwitch( 's2' )
@@ -50,7 +50,8 @@ class MyTopo( Topo ):
     self.addLink( p3, s3 )
     self.addLink( s1, s2 )
     self.addLink( s1, s3 )
-    self.addLink( s2, s3 )
+    #self.addLink( s2, s3 )
+    self.addLink( s2, p4 )
     """
     self.addLink( p1, s1 )
     self.addLink( p2, s1 )
@@ -101,11 +102,17 @@ def sshd( network, cmd='/usr/sbin/sshd', opts='-D',
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
     net = Mininet( topo=MyTopo(), link=TCLink, controller=RemoteController)
-    p1,p2,p3 = net.getNodeByName('p1', 'p2', 'p3')
+    p1,p2,p3,p4 = net.getNodeByName('p1', 'p2', 'p3', 'p4')
       
     p1.setMAC(mac='00:00:00:01:02:00')
     p2.setMAC(mac='00:00:00:01:02:01')
     p3.setMAC(mac='00:00:00:01:02:02')
+    p4.setMAC(mac='00:00:00:01:02:03')
+    
+    p1.setARP("10.0.2.0", "00:00:00:01:02:00")
+    p2.setARP("10.0.2.3", "00:00:00:01:02:03")
+    p3.setARP("10.0.2.2", "00:00:00:01:02:02")
+    p4.setARP("10.0.2.1", "00:00:00:01:02:01")
 
     opts = ' '.join( sys.argv[ 1: ] ) if len( sys.argv ) > 1 else (
         '-D -o UseDNS=no -u0' )
