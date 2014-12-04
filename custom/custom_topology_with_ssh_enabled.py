@@ -53,14 +53,10 @@ class MyTopo( Topo ):
     self.addLink( p3, s3 )
     self.addLink( s1, s2 )
     self.addLink( s1, s3 )
-    #self.addLink( s2, s3 )
+    #self.addLink( s2, s3 ) #having this line means we have loop
     self.addLink( s2, p4 )
     self.addLink( s2, p5 )
-    """
-    self.addLink( p1, s1 )
-    self.addLink( p2, s1 )
-    self.addLink( p3, s1 )
-    """
+
 def connectToRootNS( network, switch, ip, routes ):
     """Connect hosts to root namespace via switch. Starts network.
       network: Mininet() network object
@@ -106,50 +102,25 @@ def sshd( network, cmd='/usr/sbin/sshd', opts='-D',
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
     net = Mininet( topo=MyTopo(), link=TCLink, controller=RemoteController)
-    p1,p2,p3,p4,p5 = net.getNodeByName('p1', 'p2', 'p3', 'p4', 'p5')
-    
+    p1,p2,p3,p4,p5 = net.getNodeByName('p1', 'p2', 'p3', 'p4', 'p5') #change this line for adding each node
+
+    #MAC address for each file(should add one entry by adding new host)    
     p1.setMAC(mac='00:00:00:01:02:00')
     p2.setMAC(mac='00:00:00:01:02:01')
     p3.setMAC(mac='00:00:00:01:02:02')
     p4.setMAC(mac='00:00:00:01:02:03')
     p5.setMAC(mac='00:00:00:01:02:04')
     
-    
-    hosts = [p1, p2, p3, p4, p5]
-    print("test")	
-    print(type (p1))
+    #list of the host used for installing mac to ip mapping in each host staticly
+    hosts = [p1, p2, p3, p4, p5]	
    
     for p in hosts:
 	with open('/home/ubuntu/mininet/custom/staticmapping.csv', 'rb') as csvfile:
 		mapping = csv.reader(csvfile, delimiter=';', quotechar='|')
 		for row in mapping:
 			p.setARP(row[1], row[2])
-			print(row)
 	
-		"""
 
-		if row[0] != "p1": 
-			p1.setARP(row[1], row[2])
-		if row[0] != "p2":
-			p2.setARP(row[1], row[2])
-		if row[0] != "p3":
-			p3.setARP(row[1], row[2])
-		if row[0] != "p4":
-			p4.setARP(row[1], row[2])
-		if row[0] != "p5":
-			p5.setARP(row[1], row[2])
-		"""
-		
-    """
-    p1.setARP("10.0.2.0", "00:00:00:01:02:00")
-    p2.setARP("10.0.2.3", "00:00:00:01:02:03")
-    p2.setARP("10.0.2.4", "00:00:00:01:02:04")
-    p3.setARP("10.0.2.2", "00:00:00:01:02:02")
-    p4.setARP("10.0.2.1", "00:00:00:01:02:01")
-    p4.setARP("10.0.2.4", "00:00:00:01:02:04")
-    p5.setARP("10.0.2.1", "00:00:00:01:02:01")
-    p5.setARP("10.0.2.3", "00:00:00:01:02:03")
-    """
     opts = ' '.join( sys.argv[ 1: ] ) if len( sys.argv ) > 1 else (
         '-D -o UseDNS=no -u0' )
     sshd( net, opts=opts )
