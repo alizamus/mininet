@@ -102,6 +102,8 @@ def sshd( network, cmd='/usr/sbin/sshd', opts='-D',
 if __name__ == '__main__':
     lg.setLogLevel( 'info')
     net = Mininet( topo=MyTopo(), link=TCLink, controller=RemoteController)
+    cont=net.addController('r1', controller=RemoteController, ip='192.168.56.103',port=6633)
+    cont.start()
     p1,p2,p3,p4,p5 = net.getNodeByName('p1', 'p2', 'p3', 'p4', 'p5') #change this line for adding each node
 
     #MAC address for each file(should add one entry by adding new host)    
@@ -115,7 +117,7 @@ if __name__ == '__main__':
     hosts = [p1, p2, p3, p4, p5]	
    
     for p in hosts:
-	with open('/home/ubuntu/mininet/custom/staticmapping.csv', 'rb') as csvfile:
+	with open('/home/mininet/mininet_git/mininet/custom/staticmapping.csv', 'rb') as csvfile:
 		mapping = csv.reader(csvfile, delimiter=';', quotechar='|')
 		for row in mapping:
 			p.setARP(row[1], row[2])
