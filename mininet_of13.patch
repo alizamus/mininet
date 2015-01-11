@@ -1,0 +1,22 @@
+diff --git a/mininet/node.py b/mininet/node.py
+index 27d1e16..e36411d 100644
+--- a/mininet/node.py
++++ b/mininet/node.py
+@@ -965,6 +965,9 @@ def __init__( self, name, failMode='secure', datapath='kernel',
+            inband: use in-band control (False)"""
+         Switch.__init__( self, name, **params )
+         self.failMode = failMode
++        protKey = 'protocols'
++        if self.params and protKey in self.params:
++            self.opts += protKey + '=' + self.params[protKey]
+         self.datapath = datapath
+         self.inband = inband
+ 
+@@ -1055,6 +1058,7 @@ def start( self, controllers ):
+         # Construct big ovs-vsctl command
+         cmd = ( 'ovs-vsctl add-br %s ' % self +
+                 '-- set Bridge %s ' % self +
++                self.opts + ' ' +
+                 'other_config:datapath-id=%s ' % self.dpid +
+                 '-- set-fail-mode %s %s ' % ( self, self.failMode ) +
+                 intfs +
